@@ -14,57 +14,39 @@ const Blog: React.FC = () => {
     const [loading, setLoading] = useState(true);
 
 
-    // State for post slugs
-    const [postSlugs, setPostSlugs] = useState<string[]>([]);
-
-
     useEffect(() => {
-        // Fetch slugs from blog-index.json
-        const fetchSlugs = async () => {
+        const fetchPosts = async () => {
+            setLoading(true);
             try {
-                const res = await fetch('/blog-index.json');
-                if (!res.ok) throw new Error('Failed to fetch blog-index.json');
-                const slugs = await res.json();
-                setPostSlugs(Array.isArray(slugs) ? slugs : []);
-            } catch (err) {
-                console.error('Error fetching blog-index.json:', err);
-                setPostSlugs([]);
-            }
-        };
-        fetchSlugs();
-    }, []);
+                // 1. Fetch slugs from blog-index.json
+                const indexRes = await fetch('/blog-index.json');
+                if (!indexRes.ok) throw new Error('Failed to fetch blog-index.json');
+                const slugs: string[] = await indexRes.json();
 
-    useEffect(() => {
-        if (postSlugs.length === 0) {
-            setPosts([]);
-            setLoading(false);
-            return;
-        }
-        const fetchAllPosts = async () => {
-            try {
+                // 2. Fetch metadata for each post
                 const loadedPosts = await Promise.all(
-                    postSlugs.map(async (slug) => {
+                    slugs.map(async (slug) => {
                         try {
                             const res = await fetch(`/post/${slug}/content.md`);
-                            if (!res.ok) return null;
-                            // Check if the response is actually HTML (SPA fallback)
-                            const contentType = res.headers.get("content-type");
-                            if (contentType && contentType.includes("text/html")) {
+                            const contentType = res.headers.get('content-type');
+
+                            if (!res.ok || (contentType && contentType.includes('text/html'))) {
                                 return null;
                             }
+
                             const text = await res.text();
-                            // Double check content just in case
-                            if (text.trim().startsWith("<!DOCTYPE html") || text.trim().startsWith("<html")) {
+                            const trimmed = text.trim();
+                            if (trimmed.startsWith('<!DOCTYPE') || trimmed.startsWith('<html')) {
                                 return null;
                             }
+
                             const { data } = matter(text);
-                            // Check for thumb.png
-                            const thumbRes = await fetch(`/post/${slug}/thumb.png`, { method: 'HEAD' });
+
                             return {
                                 slug,
                                 title: data.title || slug.replace(/-/g, ' '),
                                 description: data.description || '',
-                                thumbnail: thumbRes.ok ? `/post/${slug}/thumb.png` : '',
+                                thumbnail: `/post/${slug}/thumb.png`,
                                 date: data.date || '',
                                 tags: data.tags || [],
                                 author: data.author || 'Luca Facchini',
@@ -76,15 +58,18 @@ const Blog: React.FC = () => {
                         }
                     })
                 );
+
                 setPosts(loadedPosts.filter((p): p is BlogPostSummary => p !== null));
             } catch (error) {
-                console.error("Failed to fetch posts:", error);
+                console.error("Failed to fetch blog posts:", error);
+                setPosts([]);
             } finally {
                 setLoading(false);
             }
         };
-        fetchAllPosts();
-    }, [postSlugs]);
+
+        fetchPosts();
+    }, []);
 
     return (
         <div className="pt-32 pb-24 bg-gray-50 dark:bg-gray-800 min-h-screen transition-colors duration-200">

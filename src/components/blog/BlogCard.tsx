@@ -21,17 +21,21 @@ export const BlogCard: React.FC<BlogCardProps> = ({ post }) => {
     return (
         <Link to={`/blog/${post.slug}`} className="group flex flex-col bg-white dark:bg-gray-900 rounded-2xl overflow-hidden hover:shadow-xl transition-all duration-300 border border-gray-100 dark:border-gray-700">
             <div className="relative h-64 overflow-hidden bg-gray-100 dark:bg-gray-800">
-                {post.thumbnail ? (
-                    <img
-                        src={post.thumbnail}
-                        alt={post.title}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                    />
-                ) : (
-                    <div className="w-full h-full flex items-center justify-center text-gray-300 dark:text-gray-600 font-bold text-2xl">
-                        POST PREVIEW
-                    </div>
-                )}
+                <img
+                    src={post.thumbnail}
+                    alt={post.title}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    onError={(e) => {
+                        (e.target as HTMLImageElement).style.display = 'none';
+                        const parent = (e.target as HTMLImageElement).parentElement;
+                        if (parent) {
+                            const fallback = document.createElement('div');
+                            fallback.className = "w-full h-full flex items-center justify-center text-gray-300 dark:text-gray-600 font-bold text-2xl uppercase tracking-widest";
+                            fallback.innerText = "Blog Post";
+                            parent.appendChild(fallback);
+                        }
+                    }}
+                />
                 <div className="absolute top-4 left-4 flex gap-2">
                     {post.tags.map(tag => (
                         <span key={tag} className="px-3 py-1 bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm text-xs font-bold text-gray-900 dark:text-white rounded-full shadow-sm">

@@ -18,38 +18,42 @@ const BlogPost: React.FC = () => {
     const [metadata, setMetadata] = useState<BlogPostSummary | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(false);
-    const [thumbExists, setThumbExists] = useState<boolean | null>(null);
+
 
     useEffect(() => {
         const loadPost = async () => {
+            if (!slug) return;
             try {
                 setLoading(true);
+                setError(false);
 
-                // 1. Fetch Markdown Content from /post/{slug}/content.md
                 const res = await fetch(`/post/${slug}/content.md`);
-                if (!res.ok) throw new Error("Markdown not found");
-                
-                // Check if the response is actually HTML (SPA fallback)
-                const contentType = res.headers.get("content-type");
-                if (contentType && contentType.includes("text/html")) {
-                     throw new Error("Markdown not found (SPA fallback)");
+
+                // Check if response is ok and is actually markdown (not an HTML fallback)
+                const contentType = res.headers.get('content-type');
+                if (!res.ok || (contentType && contentType.includes('text/html'))) {
+                    throw new Error("Post not found");
                 }
 
                 const text = await res.text();
 
-                 // Double check content
-                if (text.trim().startsWith("<!DOCTYPE html") || text.trim().startsWith("<html")) {
-                     throw new Error("Markdown not found (SPA fallback content)");
+                // Extra safety: if it looks like HTML, it's probably the SPA fallback
+                const trimmed = text.trim();
+                if (trimmed.startsWith('<!DOCTYPE') || trimmed.startsWith('<html') || trimmed.startsWith('<script')) {
+                    throw new Error("Invalid post content");
                 }
 
-                // 2. Parse Frontmatter
                 const { data, content: mdContent } = matter(text);
-                
-                // 3. Set content and metadata
+
+                // If there's no real content and no title in frontmatter, it's likely invalid
+                if (!mdContent.trim() && !data.title) {
+                    throw new Error("Empty post content");
+                }
+
                 setContent(mdContent);
                 setMetadata({
-                    slug: slug || '',
-                    title: data.title || slug?.replace(/-/g, ' '),
+                    slug: slug,
+                    title: data.title || slug.replace(/-/g, ' '),
                     description: data.description || '',
                     thumbnail: `/post/${slug}/thumb.png`,
                     date: data.date || '',
@@ -58,19 +62,15 @@ const BlogPost: React.FC = () => {
                     authorAvatar: data.authorAvatar || `https://ui-avatars.com/api/?name=${data.author || 'Luca+Facchini'}`
                 });
 
-                // 4. Check if thumb.png exists
-                const thumbRes = await fetch(`/post/${slug}/thumb.png`, { method: 'HEAD' });
-                setThumbExists(thumbRes.ok);
-
             } catch (err) {
-                console.error(err);
+                console.error("Error loading blog post:", err);
                 setError(true);
             } finally {
                 setLoading(false);
             }
         };
 
-        if (slug) loadPost();
+        loadPost();
     }, [slug]);
 
     if (loading) {
@@ -124,14 +124,22 @@ const BlogPost: React.FC = () => {
                 </header>
 
                 {/* Featured Image */}
-                <div className="mb-12 rounded-3xl overflow-hidden shadow-sm h-[400px] bg-gray-50 dark:bg-gray-800 border border-gray-100 dark:border-gray-700">
-                    {thumbExists ? (
-                        <img src={metadata?.thumbnail} alt={metadata?.title} className="w-full h-full object-cover" />
-                    ) : (
-                        <div className="w-full h-full flex items-center justify-center text-gray-200 dark:text-gray-700 font-bold text-4xl tracking-widest">
-                            BLOG POST
-                        </div>
-                    )}
+                <div className="mb-12 rounded-3xl overflow-hidden shadow-sm h-[400px] bg-gray-50 dark:bg-gray-800 border border-gray-100 dark:border-gray-700 relative">
+                    <img
+                        src={metadata?.thumbnail}
+                        alt={metadata?.title}
+                        className="w-full h-full object-cover"
+                        onError={(e) => {
+                            (e.target as HTMLImageElement).style.display = 'none';
+                            const parent = (e.target as HTMLImageElement).parentElement;
+                            if (parent) {
+                                const fallback = document.createElement('div');
+                                fallback.className = "w-full h-full flex items-center justify-center text-gray-200 dark:text-gray-700 font-bold text-4xl tracking-widest";
+                                fallback.innerText = "BLOG POST";
+                                parent.appendChild(fallback);
+                            }
+                        }}
+                    />
                 </div>
 
                 {/* Content */}
