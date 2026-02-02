@@ -68,12 +68,12 @@ const CodeBlock = ({ language, children }: { language: string, children: string 
 
 export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content }) => {
     return (
-        <article className="prose prose-lg prose-gray max-w-none 
-      prose-headings:font-bold prose-headings:tracking-tight prose-headings:text-gray-900 
-      prose-a:text-blue-600 prose-a:no-underline hover:prose-a:underline
+        <article className="prose prose-lg prose-gray dark:prose-invert max-w-none 
+      prose-headings:font-bold prose-headings:tracking-tight prose-headings:text-gray-900 dark:prose-headings:text-white
+      prose-a:text-blue-600 dark:prose-a:text-blue-400 prose-a:no-underline hover:prose-a:underline
       prose-img:rounded-3xl prose-img:shadow-xl
       prose-pre:bg-transparent prose-pre:p-0
-      prose-code:text-blue-600 prose-code:bg-blue-50 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded-md prose-code:before:content-none prose-code:after:content-none
+      prose-code:text-blue-600 dark:prose-code:text-blue-400 prose-code:bg-blue-50 dark:prose-code:bg-blue-950 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded-md prose-code:before:content-none prose-code:after:content-none
     ">
             <ReactMarkdown
                 components={{

@@ -75,8 +75,8 @@ const BlogPost: React.FC = () => {
 
     if (loading) {
         return (
-            <div className="pt-32 pb-20 min-h-screen flex justify-center">
-                <div className="w-8 h-8 border-4 border-gray-300 border-t-black rounded-full animate-spin"></div>
+            <div className="pt-32 pb-20 min-h-screen flex justify-center bg-white dark:bg-gray-900 transition-colors duration-200">
+                <div className="w-8 h-8 border-4 border-gray-300 dark:border-gray-600 border-t-black dark:border-t-white rounded-full animate-spin"></div>
             </div>
         );
     }
@@ -86,9 +86,9 @@ const BlogPost: React.FC = () => {
     }
 
     return (
-        <article className="pt-32 pb-24 bg-white min-h-screen">
+        <article className="pt-32 pb-24 bg-white dark:bg-gray-900 min-h-screen transition-colors duration-200">
             <Layout className="max-w-4xl">
-                <Link to="/blog" className="inline-flex items-center text-gray-500 hover:text-black mb-8 transition-colors">
+                <Link to="/blog" className="inline-flex items-center text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white mb-8 transition-colors">
                     <ArrowLeft size={20} className="mr-2" /> Back to Blog
                 </Link>
 
@@ -96,25 +96,25 @@ const BlogPost: React.FC = () => {
                 <header className="mb-12">
                     <div className="flex gap-2 mb-4">
                         {metadata?.tags.map(tag => (
-                            <span key={tag} className="px-3 py-1 bg-gray-100 text-xs font-bold text-gray-700 rounded-full">
+                            <span key={tag} className="px-3 py-1 bg-gray-100 dark:bg-gray-800 text-xs font-bold text-gray-700 dark:text-gray-300 rounded-full">
                                 {tag}
                             </span>
                         ))}
                     </div>
-                    <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6 leading-tight">
+                    <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-6 leading-tight">
                         {metadata?.title}
                     </h1>
 
-                    <div className="flex items-center justify-between border-b border-gray-100 pb-8">
+                    <div className="flex items-center justify-between border-b border-gray-100 dark:border-gray-800 pb-8">
                         <div className="flex items-center gap-4">
                             <img
                                 src={metadata?.authorAvatar}
                                 alt={metadata?.author}
-                                className="w-12 h-12 rounded-full border border-gray-100"
+                                className="w-12 h-12 rounded-full border border-gray-100 dark:border-gray-700"
                             />
                             <div>
-                                <div className="font-bold text-gray-900">{metadata?.author}</div>
-                                <div className="flex items-center text-gray-500 text-sm">
+                                <div className="font-bold text-gray-900 dark:text-white">{metadata?.author}</div>
+                                <div className="flex items-center text-gray-500 dark:text-gray-400 text-sm">
                                     <Calendar size={14} className="mr-1" />
                                     {metadata?.date}
                                 </div>
@@ -124,11 +124,11 @@ const BlogPost: React.FC = () => {
                 </header>
 
                 {/* Featured Image */}
-                <div className="mb-12 rounded-3xl overflow-hidden shadow-sm h-[400px] bg-gray-50 border border-gray-100">
+                <div className="mb-12 rounded-3xl overflow-hidden shadow-sm h-[400px] bg-gray-50 dark:bg-gray-800 border border-gray-100 dark:border-gray-700">
                     {thumbExists ? (
                         <img src={metadata?.thumbnail} alt={metadata?.title} className="w-full h-full object-cover" />
                     ) : (
-                        <div className="w-full h-full flex items-center justify-center text-gray-200 font-bold text-4xl tracking-widest">
+                        <div className="w-full h-full flex items-center justify-center text-gray-200 dark:text-gray-700 font-bold text-4xl tracking-widest">
                             BLOG POST
                         </div>
                     )}

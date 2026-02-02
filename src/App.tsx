@@ -7,12 +7,15 @@ import Blog from './pages/Blog';
 import Contact from './pages/Contact';
 import BlogPost from './pages/BlogPost';
 import NotFound from './pages/NotFound';
+import { ThemeProvider, useTheme } from './contexts/ThemeContext';
 
-function App() {
+function AppContent() {
+  const { theme } = useTheme();
+  
   return (
     <Router>
       <ScrollToHash />
-      <div className="flex flex-col min-h-screen font-sans text-gray-900">
+      <div className={`flex flex-col min-h-screen font-sans ${theme} text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-900 transition-colors duration-200`}>
         <Navbar />
         <main className="flex-grow">
           <Routes>
@@ -26,6 +29,14 @@ function App() {
         <Footer />
       </div>
     </Router>
+  );
+}
+
+function App() {
+  return (
+    <ThemeProvider>
+      <AppContent />
+    </ThemeProvider>
   );
 }
 

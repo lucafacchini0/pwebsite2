@@ -87,19 +87,19 @@ const Blog: React.FC = () => {
     }, [postSlugs]);
 
     return (
-        <div className="pt-32 pb-24 bg-gray-50 min-h-screen">
+        <div className="pt-32 pb-24 bg-gray-50 dark:bg-gray-800 min-h-screen transition-colors duration-200">
             <Layout>
                 <div className="text-center max-w-2xl mx-auto mb-16 animate-in fade-in slide-in-from-bottom-4 duration-700">
-                    <span className="text-black font-semibold tracking-wider uppercase text-sm mb-2 block">The Blog</span>
-                    <h1 className="text-5xl font-bold text-gray-900 mb-6">Thoughts & Tutorials.</h1>
-                    <p className="text-xl text-gray-600">
+                    <span className="text-black dark:text-white font-semibold tracking-wider uppercase text-sm mb-2 block">The Blog</span>
+                    <h1 className="text-5xl font-bold text-gray-900 dark:text-white mb-6">Thoughts & Tutorials.</h1>
+                    <p className="text-xl text-gray-600 dark:text-gray-300">
                         Sharing my journey, learnings, and thoughts on technology, design, and everything in between.
                     </p>
                 </div>
 
                 {loading ? (
                     <div className="flex justify-center py-20">
-                        <div className="w-8 h-8 border-4 border-gray-300 border-t-black rounded-full animate-spin"></div>
+                        <div className="w-8 h-8 border-4 border-gray-300 dark:border-gray-600 border-t-black dark:border-t-white rounded-full animate-spin"></div>
                     </div>
                 ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8 animate-in fade-in slide-in-from-bottom-8 duration-700 delay-200">

@@ -15,7 +15,7 @@ export const DotsGridBackground: React.FC<DotsGridBackgroundProps> = ({
 }) => {
     return (
         <div
-            className={`absolute inset-0 h-full w-full pointer-events-none -z-10 ${className}`}
+            className={`absolute inset-0 h-full w-full pointer-events-none z-0 dark:opacity-20 transition-opacity duration-200 ${className}`}
             style={{
                 backgroundImage: `radial-gradient(circle, ${color} ${radius}px, transparent ${radius}px)`,
                 backgroundSize: `${gap}px ${gap}px`
