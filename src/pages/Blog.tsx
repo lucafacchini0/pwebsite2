@@ -1,6 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Layout } from '../components/common/Layout';
 import { BlogCard, type BlogPostSummary } from '../components/blog/BlogCard';
+import { BlogSearch } from '../components/blog/BlogSearch';
+import { BlogFilters } from '../components/blog/BlogFilters';
+import { BlogEmptyState } from '../components/blog/BlogEmptyState';
 import matter from 'gray-matter';
 import { Buffer } from 'buffer';
 
@@ -12,18 +15,52 @@ if (typeof window !== 'undefined') {
 const Blog: React.FC = () => {
     const [posts, setPosts] = useState<BlogPostSummary[]>([]);
     const [loading, setLoading] = useState(true);
+    const [searchQuery, setSearchQuery] = useState('');
+    const [selectedTags, setSelectedTags] = useState<Set<string>>(new Set());
+    const [showFilters, setShowFilters] = useState(false);
 
+    const allTags = useMemo(() => {
+        const tags = new Set<string>();
+        posts.forEach(post => post.tags.forEach(tag => tags.add(tag)));
+        return Array.from(tags).sort();
+    }, [posts]);
+
+    const filteredPosts = useMemo(() => {
+        return posts.filter(post => {
+            const matchesSearch = post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                post.description.toLowerCase().includes(searchQuery.toLowerCase());
+            const matchesTags = selectedTags.size === 0 || post.tags.some(tag => selectedTags.has(tag));
+            return matchesSearch && matchesTags;
+        });
+    }, [posts, searchQuery, selectedTags]);
+
+    const toggleTag = (tag: string) => {
+        const newTags = new Set(selectedTags);
+        if (newTags.has(tag)) {
+            newTags.delete(tag);
+        } else {
+            newTags.add(tag);
+        }
+        setSelectedTags(newTags);
+    };
+
+    const clearFilters = () => {
+        setSelectedTags(new Set());
+    };
+
+    const clearAll = () => {
+        setSearchQuery('');
+        clearFilters();
+    };
 
     useEffect(() => {
         const fetchPosts = async () => {
             setLoading(true);
             try {
-                // 1. Fetch slugs from blog-index.json
                 const indexRes = await fetch('/blog-index.json');
                 if (!indexRes.ok) throw new Error('Failed to fetch blog-index.json');
                 const slugs: string[] = await indexRes.json();
 
-                // 2. Fetch metadata for each post
                 const loadedPosts = await Promise.all(
                     slugs.map(async (slug) => {
                         try {
@@ -82,16 +119,40 @@ const Blog: React.FC = () => {
                     </p>
                 </div>
 
+                <div className="max-w-4xl mx-auto mb-12 space-y-4">
+                    <BlogSearch
+                        searchQuery={searchQuery}
+                        setSearchQuery={setSearchQuery}
+                        showFilters={showFilters}
+                        setShowFilters={setShowFilters}
+                        selectedCount={selectedTags.size}
+                    />
+
+                    <BlogFilters
+                        showFilters={showFilters}
+                        allTags={allTags}
+                        selectedTags={selectedTags}
+                        toggleTag={toggleTag}
+                        clearFilters={clearFilters}
+                    />
+                </div>
+
                 {loading ? (
                     <div className="flex justify-center py-20">
                         <div className="w-8 h-8 border-4 border-gray-300 dark:border-gray-600 border-t-black dark:border-t-white rounded-full animate-spin"></div>
                     </div>
                 ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 animate-in fade-in slide-in-from-bottom-8 duration-700 delay-200">
-                        {posts.map((post) => (
-                            <BlogCard key={post.slug} post={post} />
-                        ))}
-                    </div>
+                    <>
+                        {filteredPosts.length > 0 ? (
+                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 animate-in fade-in slide-in-from-bottom-8 duration-700">
+                                {filteredPosts.map((post) => (
+                                    <BlogCard key={post.slug} post={post} />
+                                ))}
+                            </div>
+                        ) : (
+                            <BlogEmptyState onClear={clearAll} />
+                        )}
+                    </>
                 )}
             </Layout>
         </div>

@@ -47,7 +47,7 @@ export const Navbar: React.FC = () => {
                     </Link>
 
                     {/* Desktop Nav */}
-                    <div className="hidden md:flex items-center gap-8">
+                    <div className="hidden lg:flex items-center gap-8">
                         <NavLink to="/">Home</NavLink>
                         <NavLink to="/#about">About</NavLink>
                         <NavLink to="/#projects">Projects</NavLink>
@@ -57,7 +57,7 @@ export const Navbar: React.FC = () => {
                     </div>
 
                     {/* Mobile Menu Button and Theme Toggle */}
-                    <div className="md:hidden flex items-center gap-2">
+                    <div className="lg:hidden flex items-center gap-2">
                         <ThemeToggle />
                         <button
                             className="p-2 -mr-2 text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white"
@@ -72,7 +72,7 @@ export const Navbar: React.FC = () => {
 
             {/* Mobile Nav */}
             {isOpen && (
-                <div className="md:hidden bg-white dark:bg-gray-900 border-b border-gray-100 dark:border-gray-800 animate-in slide-in-from-top-2">
+                <div className="lg:hidden bg-white dark:bg-gray-900 border-b border-gray-100 dark:border-gray-800 animate-in slide-in-from-top-2">
                     <Layout>
                         <div className="flex flex-col py-4 gap-4">
                             <NavLink to="/" onClick={() => setIsOpen(false)}>Home</NavLink>
