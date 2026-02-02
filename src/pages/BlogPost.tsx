@@ -1,9 +1,16 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, Navigate } from 'react-router-dom';
 import { Layout } from '../components/common/Layout';
 import { MarkdownRenderer } from '../components/blog/MarkdownRenderer';
 import { ArrowLeft, Calendar } from 'lucide-react';
 import type { BlogPostSummary } from '../components/blog/BlogCard';
+import matter from 'gray-matter';
+import { Buffer } from 'buffer';
+
+// This is needed for gray-matter to work in the browser
+if (typeof window !== 'undefined') {
+    (window as any).Buffer = Buffer;
+}
 
 const BlogPost: React.FC = () => {
     const { slug } = useParams<{ slug: string }>();
@@ -11,31 +18,49 @@ const BlogPost: React.FC = () => {
     const [metadata, setMetadata] = useState<BlogPostSummary | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(false);
+    const [thumbExists, setThumbExists] = useState<boolean | null>(null);
 
     useEffect(() => {
         const loadPost = async () => {
             try {
                 setLoading(true);
-                // 1. Fetch post metadata (optional, usually from posts.json or just inferred)
-                // For simplicity, we'll try to find it in the posts.json to get the title/author etc.
-                // If not found, we might just display generic headers.
-                const postsRes = await fetch('/blog/posts.json');
-                if (postsRes.ok) {
-                    const posts: BlogPostSummary[] = await postsRes.json();
-                    const post = posts.find(p => p.slug === slug);
-                    if (post) setMetadata(post);
+
+                // 1. Fetch Markdown Content from /post/{slug}/content.md
+                const res = await fetch(`/post/${slug}/content.md`);
+                if (!res.ok) throw new Error("Markdown not found");
+                
+                // Check if the response is actually HTML (SPA fallback)
+                const contentType = res.headers.get("content-type");
+                if (contentType && contentType.includes("text/html")) {
+                     throw new Error("Markdown not found (SPA fallback)");
                 }
 
-                // 2. Fetch Markdown Content
-                // Expected path: /blog/{slug}/{slug}.md or /blog/{slug}/tutorial1.md - prompt says "tutorial1.md -> Markdown content".
-                // It seems the markdown filename matches the folder name OR is specific.
-                // Let's assume the markdown filename is the same as the slug for consistency: /blog/{slug}/{slug}.md
-                // If the prompt example is strictly /blog/tutorial1/tutorial1.md, then yes, slug.md.
-
-                const res = await fetch(`/blog/${slug}/${slug}.md`);
-                if (!res.ok) throw new Error("Markdown not found");
                 const text = await res.text();
-                setContent(text);
+
+                 // Double check content
+                if (text.trim().startsWith("<!DOCTYPE html") || text.trim().startsWith("<html")) {
+                     throw new Error("Markdown not found (SPA fallback content)");
+                }
+
+                // 2. Parse Frontmatter
+                const { data, content: mdContent } = matter(text);
+                
+                // 3. Set content and metadata
+                setContent(mdContent);
+                setMetadata({
+                    slug: slug || '',
+                    title: data.title || slug?.replace(/-/g, ' '),
+                    description: data.description || '',
+                    thumbnail: `/post/${slug}/thumb.png`,
+                    date: data.date || '',
+                    tags: data.tags || [],
+                    author: data.author || 'Luca Facchini',
+                    authorAvatar: data.authorAvatar || `https://ui-avatars.com/api/?name=${data.author || 'Luca+Facchini'}`
+                });
+
+                // 4. Check if thumb.png exists
+                const thumbRes = await fetch(`/post/${slug}/thumb.png`, { method: 'HEAD' });
+                setThumbExists(thumbRes.ok);
 
             } catch (err) {
                 console.error(err);
@@ -56,18 +81,8 @@ const BlogPost: React.FC = () => {
         );
     }
 
-    if (error || !content) {
-        return (
-            <div className="pt-32 pb-20 min-h-screen">
-                <Layout>
-                    <div className="text-center">
-                        <h1 className="text-4xl font-bold mb-4">Post Not Found</h1>
-                        <p className="mb-8">The article you are looking for does not exist.</p>
-                        <Link to="/blog" className="text-blue-600 hover:underline">Back to Blog</Link>
-                    </div>
-                </Layout>
-            </div>
-        );
+    if (error || (!loading && !content)) {
+        return <Navigate to="/404" replace />;
     }
 
     return (
@@ -87,21 +102,21 @@ const BlogPost: React.FC = () => {
                         ))}
                     </div>
                     <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6 leading-tight">
-                        {metadata?.title || slug?.replace(/-/g, ' ')}
+                        {metadata?.title}
                     </h1>
 
                     <div className="flex items-center justify-between border-b border-gray-100 pb-8">
                         <div className="flex items-center gap-4">
                             <img
-                                src={metadata?.authorAvatar || "https://ui-avatars.com/api/?name=Luca+Facchini"}
+                                src={metadata?.authorAvatar}
                                 alt={metadata?.author}
                                 className="w-12 h-12 rounded-full border border-gray-100"
                             />
                             <div>
-                                <div className="font-bold text-gray-900">{metadata?.author || "Luca Facchini"}</div>
+                                <div className="font-bold text-gray-900">{metadata?.author}</div>
                                 <div className="flex items-center text-gray-500 text-sm">
                                     <Calendar size={14} className="mr-1" />
-                                    {metadata?.date || "Unknown Date"}
+                                    {metadata?.date}
                                 </div>
                             </div>
                         </div>
@@ -109,15 +124,18 @@ const BlogPost: React.FC = () => {
                 </header>
 
                 {/* Featured Image */}
-                {metadata?.thumbnail && (
-                    <div className="mb-12 rounded-2xl overflow-hidden shadow-lg h-[400px]">
-                        <img src={metadata.thumbnail} alt={metadata.title} className="w-full h-full object-cover" />
-                    </div>
-                )}
+                <div className="mb-12 rounded-3xl overflow-hidden shadow-sm h-[400px] bg-gray-50 border border-gray-100">
+                    {thumbExists ? (
+                        <img src={metadata?.thumbnail} alt={metadata?.title} className="w-full h-full object-cover" />
+                    ) : (
+                        <div className="w-full h-full flex items-center justify-center text-gray-200 font-bold text-4xl tracking-widest">
+                            BLOG POST
+                        </div>
+                    )}
+                </div>
 
                 {/* Content */}
                 <MarkdownRenderer content={content} />
-
             </Layout>
         </article>
     );

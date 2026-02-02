@@ -10,7 +10,7 @@ const InfoItem = ({ label, value }: { label: string; value: string }) => (
 
 export const AboutMe: React.FC = () => {
     return (
-        <section id="about" className="py-24 bg-white">
+        <section id="about" className="py-24 bg-gray-50">
             <Layout>
                 <div className="grid grid-cols-1 md:grid-cols-12 gap-12 items-start">
 

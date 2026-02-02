@@ -21,11 +21,17 @@ export const BlogCard: React.FC<BlogCardProps> = ({ post }) => {
     return (
         <Link to={`/blog/${post.slug}`} className="group flex flex-col bg-white rounded-2xl overflow-hidden hover:shadow-xl transition-all duration-300 border border-gray-100">
             <div className="relative h-64 overflow-hidden bg-gray-100">
-                <img
-                    src={post.thumbnail}
-                    alt={post.title}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                />
+                {post.thumbnail ? (
+                    <img
+                        src={post.thumbnail}
+                        alt={post.title}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
+                ) : (
+                    <div className="w-full h-full flex items-center justify-center text-gray-300 font-bold text-2xl">
+                        POST PREVIEW
+                    </div>
+                )}
                 <div className="absolute top-4 left-4 flex gap-2">
                     {post.tags.map(tag => (
                         <span key={tag} className="px-3 py-1 bg-white/90 backdrop-blur-sm text-xs font-bold text-gray-900 rounded-full shadow-sm">

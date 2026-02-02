@@ -1,6 +1,7 @@
 import React from 'react';
 import { Layout } from '../common/Layout';
 import { Code, PenTool, Globe, ArrowRight } from 'lucide-react';
+import { DotsGridBackground } from '../common/DotsGridBackground';
 
 interface ServiceCardProps {
     icon: React.ReactNode;
@@ -49,7 +50,8 @@ export const WhatIDo: React.FC = () => {
     ];
 
     return (
-        <section className="py-24 bg-white">
+        <section className="py-24 bg-white relative">
+            <DotsGridBackground />
             <Layout>
                 <div className="mb-16 md:flex md:justify-between md:items-end">
                     <div className="max-w-xl">

@@ -1,57 +1,90 @@
 import React, { useEffect, useState } from 'react';
 import { Layout } from '../components/common/Layout';
 import { BlogCard, type BlogPostSummary } from '../components/blog/BlogCard';
+import matter from 'gray-matter';
+import { Buffer } from 'buffer';
+
+// This is needed for gray-matter to work in the browser
+if (typeof window !== 'undefined') {
+    (window as any).Buffer = Buffer;
+}
 
 const Blog: React.FC = () => {
     const [posts, setPosts] = useState<BlogPostSummary[]>([]);
     const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        // In a real scenario, fetch from /blog/posts.json
-        // For now, we simulate fetching or hardcode if the file doesn't exist yet.
-        // I will write a mock fetcher here that tries to fetch but falls back to hardcoded data to ensure it works immediately.
 
-        const fetchPosts = async () => {
+    // State for post slugs
+    const [postSlugs, setPostSlugs] = useState<string[]>([]);
+
+
+    useEffect(() => {
+        // Fetch slugs from blog-index.json
+        const fetchSlugs = async () => {
             try {
-                const response = await fetch('/blog/posts.json');
-                if (response.ok) {
-                    const data = await response.json();
-                    setPosts(data);
-                } else {
-                    throw new Error("Failed to fetch");
-                }
+                const res = await fetch('/blog-index.json');
+                if (!res.ok) throw new Error('Failed to fetch blog-index.json');
+                const slugs = await res.json();
+                setPostSlugs(Array.isArray(slugs) ? slugs : []);
+            } catch (err) {
+                console.error('Error fetching blog-index.json:', err);
+                setPostSlugs([]);
+            }
+        };
+        fetchSlugs();
+    }, []);
+
+    useEffect(() => {
+        if (postSlugs.length === 0) {
+            setPosts([]);
+            setLoading(false);
+            return;
+        }
+        const fetchAllPosts = async () => {
+            try {
+                const loadedPosts = await Promise.all(
+                    postSlugs.map(async (slug) => {
+                        try {
+                            const res = await fetch(`/post/${slug}/content.md`);
+                            if (!res.ok) return null;
+                            // Check if the response is actually HTML (SPA fallback)
+                            const contentType = res.headers.get("content-type");
+                            if (contentType && contentType.includes("text/html")) {
+                                return null;
+                            }
+                            const text = await res.text();
+                            // Double check content just in case
+                            if (text.trim().startsWith("<!DOCTYPE html") || text.trim().startsWith("<html")) {
+                                return null;
+                            }
+                            const { data } = matter(text);
+                            // Check for thumb.png
+                            const thumbRes = await fetch(`/post/${slug}/thumb.png`, { method: 'HEAD' });
+                            return {
+                                slug,
+                                title: data.title || slug.replace(/-/g, ' '),
+                                description: data.description || '',
+                                thumbnail: thumbRes.ok ? `/post/${slug}/thumb.png` : '',
+                                date: data.date || '',
+                                tags: data.tags || [],
+                                author: data.author || 'Luca Facchini',
+                                authorAvatar: data.authorAvatar || `https://ui-avatars.com/api/?name=${data.author || 'Luca+Facchini'}`
+                            };
+                        } catch (err) {
+                            console.error(`Error loading post ${slug}:`, err);
+                            return null;
+                        }
+                    })
+                );
+                setPosts(loadedPosts.filter((p): p is BlogPostSummary => p !== null));
             } catch (error) {
-                console.warn("Could not fetch posts.json, using fallback data.");
-                // Fallback data
-                setPosts([
-                    {
-                        slug: "tutorial1",
-                        title: "Getting Started with React and Tailwind",
-                        description: "A complete guide to setting up a modern web development environment using the latest tools.",
-                        thumbnail: "/blog/tutorial1/thumb.png", // Assuming relative to public
-                        date: "Oct 12, 2023",
-                        tags: ["React", "Tutorial"],
-                        author: "Luca Facchini",
-                        authorAvatar: "https://ui-avatars.com/api/?name=Luca+Facchini&background=000&color=fff"
-                    },
-                    {
-                        slug: "ui-design-principles",
-                        title: "5 UI Design Principles for Developers",
-                        description: "Learn the core principles of UI design that will help you build better looking applications without a designer.",
-                        thumbnail: "https://images.unsplash.com/photo-1561070791-2526d30994b5?auto=format&fit=crop&q=80&w=1000",
-                        date: "Sep 28, 2023",
-                        tags: ["Design", "UI/UX"],
-                        author: "Luca Facchini",
-                        authorAvatar: "https://ui-avatars.com/api/?name=Luca+Facchini&background=000&color=fff"
-                    }
-                ]);
+                console.error("Failed to fetch posts:", error);
             } finally {
                 setLoading(false);
             }
         };
-
-        fetchPosts();
-    }, []);
+        fetchAllPosts();
+    }, [postSlugs]);
 
     return (
         <div className="pt-32 pb-24 bg-gray-50 min-h-screen">

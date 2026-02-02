@@ -2,6 +2,7 @@ import React from 'react';
 import { ArrowDown } from 'lucide-react';
 import { Layout } from '../common/Layout';
 import { Button } from '../common/Button';
+import { DotsGridBackground } from '../common/DotsGridBackground';
 
 export const Hero: React.FC = () => {
     const scrollToAbout = () => {
@@ -11,7 +12,7 @@ export const Hero: React.FC = () => {
 
     return (
         <section className="relative h-screen flex flex-col justify-center items-center text-center overflow-hidden">
-            {/* Background gradient/decoration could go here */}
+            <DotsGridBackground />
 
             <Layout className="flex flex-col items-center z-10">
                 <h1 className="text-5xl md:text-7xl font-bold tracking-tight text-gray-900 mb-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
