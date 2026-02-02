@@ -7,7 +7,7 @@ interface LayoutProps {
 
 export const Layout: React.FC<LayoutProps> = ({ children, className = '' }) => {
     return (
-        <div className={`max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full ${className}`}>
+        <div className={`max-w-7xl mx-auto px-6 sm:px-12 md:px-20 lg:px-32 w-full ${className}`}>
             {children}
         </div>
     );
