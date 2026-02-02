@@ -9,6 +9,6 @@
   }
 
   body {
-    @apply antialiased text-gray-900 bg-white dark:text-gray-100 dark:bg-gray-900 transition-colors duration-200;
+    @apply antialiased text-zinc-900 bg-white dark:text-zinc-100 dark:bg-black transition-colors duration-200;
   }
 }

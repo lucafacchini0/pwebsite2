@@ -20,19 +20,19 @@ export const BlogSearch: React.FC<BlogSearchProps> = ({
         <div className="flex gap-4">
             <div className="relative group flex-grow">
                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                    <Search className="h-5 w-5 text-gray-400 group-focus-within:text-black dark:group-focus-within:text-white transition-colors" />
+                    <Search className="h-5 w-5 text-zinc-400 group-focus-within:text-black dark:group-focus-within:text-white transition-colors" />
                 </div>
                 <input
                     type="text"
                     placeholder="Search tutorials, news, or articles..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="block w-full pl-11 pr-12 py-4 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-2xl text-gray-900 dark:text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white focus:border-transparent transition-all shadow-sm"
+                    className="block w-full pl-11 pr-12 py-4 bg-white dark:bg-black border border-zinc-100 dark:border-zinc-800 rounded-2xl text-zinc-900 dark:text-white placeholder-zinc-500 focus:outline-none focus:ring-1 focus:ring-black dark:focus:ring-white focus:border-transparent transition-all shadow-sm"
                 />
                 {searchQuery && (
                     <button
                         onClick={() => setSearchQuery('')}
-                        className="absolute inset-y-0 right-14 flex items-center text-gray-400 hover:text-black dark:hover:text-white transition-colors"
+                        className="absolute inset-y-0 right-14 flex items-center text-zinc-400 hover:text-black dark:hover:text-white transition-colors"
                     >
                         <X className="h-5 w-5" />
                     </button>
@@ -43,13 +43,13 @@ export const BlogSearch: React.FC<BlogSearchProps> = ({
                 onClick={() => setShowFilters(!showFilters)}
                 className={`flex items-center gap-2 lg:gap-3 px-4 lg:px-6 py-4 rounded-2xl font-bold transition-all border shadow-sm hover:cursor-pointer ${showFilters || selectedCount > 0
                     ? 'bg-black text-white dark:bg-white dark:text-black border-transparent'
-                    : 'bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-300 border-gray-200 dark:border-gray-700 hover:border-black dark:hover:border-white'
+                    : 'bg-white dark:bg-black text-zinc-700 dark:text-zinc-300 border-zinc-200 dark:border-zinc-800 hover:border-black dark:hover:border-white'
                     }`}
             >
                 <SlidersHorizontal size={20} />
                 <span className="hidden lg:inline">Filters</span>
                 {selectedCount > 0 && (
-                    <span className="flex h-6 w-6 items-center justify-center rounded-full bg-gray-600 dark:bg-gray-500 text-xs font-bold text-white shadow-sm">
+                    <span className="flex h-6 w-6 items-center justify-center rounded-full bg-zinc-600 dark:bg-zinc-500 text-xs font-bold text-white shadow-sm">
                         {selectedCount}
                     </span>
                 )}

@@ -8,7 +8,7 @@ interface DotsGridBackgroundProps {
 }
 
 export const DotsGridBackground: React.FC<DotsGridBackgroundProps> = ({
-    color = '#e2e8f0', // slate-200
+    color = '#E4E4E7', // zinc-200
     gap = 24,
     radius = 1.5,
     className = ''

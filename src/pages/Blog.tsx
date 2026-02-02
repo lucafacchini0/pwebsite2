@@ -109,12 +109,12 @@ const Blog: React.FC = () => {
     }, []);
 
     return (
-        <div className="pt-32 pb-24 bg-gray-50 dark:bg-gray-800 min-h-screen transition-colors duration-200">
+        <div className="pt-32 pb-24 bg-zinc-50 dark:bg-black min-h-screen transition-colors duration-200">
             <Layout>
                 <div className="text-center max-w-2xl mx-auto mb-16 animate-in fade-in slide-in-from-bottom-4 duration-700">
                     <span className="text-black dark:text-white font-semibold tracking-wider uppercase text-sm mb-2 block">The Blog</span>
-                    <h1 className="text-5xl font-bold text-gray-900 dark:text-white mb-6">Thoughts & Tutorials.</h1>
-                    <p className="text-xl text-gray-600 dark:text-gray-300">
+                    <h1 className="text-5xl font-bold text-zinc-900 dark:text-white mb-6 tracking-tight">Thoughts & Tutorials.</h1>
+                    <p className="text-xl text-zinc-600 dark:text-zinc-400 font-light">
                         Sharing my journey, learnings, and thoughts on technology, design, and everything in between.
                     </p>
                 </div>
@@ -139,7 +139,7 @@ const Blog: React.FC = () => {
 
                 {loading ? (
                     <div className="flex justify-center py-20">
-                        <div className="w-8 h-8 border-4 border-gray-300 dark:border-gray-600 border-t-black dark:border-t-white rounded-full animate-spin"></div>
+                        <div className="w-8 h-8 border-4 border-zinc-200 dark:border-zinc-800 border-t-black dark:border-t-white rounded-full animate-spin"></div>
                     </div>
                 ) : (
                     <>

@@ -11,12 +11,12 @@ interface ServiceCardProps {
 }
 
 const ServiceCard: React.FC<ServiceCardProps> = ({ icon, title, description, link }) => (
-    <div className="group p-8 bg-gray-50 dark:bg-gray-800 rounded-2xl hover:bg-black dark:hover:bg-white transition-colors duration-300">
+    <div className="group p-8 bg-zinc-50 dark:bg-zinc-900 rounded-2xl hover:bg-black dark:hover:bg-white transition-colors duration-300">
         <div className="mb-6 text-black dark:text-white group-hover:text-white dark:group-hover:text-black transition-colors">
             {icon}
         </div>
-        <h3 className="text-xl font-bold mb-3 text-gray-900 dark:text-white group-hover:text-white dark:group-hover:text-black transition-colors">{title}</h3>
-        <p className="text-gray-600 dark:text-gray-300 mb-6 group-hover:text-gray-300 dark:group-hover:text-gray-700 transition-colors leading-relaxed">
+        <h3 className="text-xl font-bold mb-3 text-zinc-900 dark:text-white group-hover:text-white dark:group-hover:text-black transition-colors">{title}</h3>
+        <p className="text-zinc-600 dark:text-zinc-300 mb-6 group-hover:text-zinc-300 dark:group-hover:text-zinc-700 transition-colors leading-relaxed font-light">
             {description}
         </p>
         {link && (
@@ -50,13 +50,13 @@ export const WhatIDo: React.FC = () => {
     ];
 
     return (
-        <section className="py-24 bg-white dark:bg-gray-900 relative transition-colors duration-200">
+        <section className="py-24 bg-white dark:bg-black relative transition-colors duration-200">
             <DotsGridBackground />
             <Layout className="relative z-10">
                 <div className="mb-16 md:flex md:justify-between md:items-end">
                     <div className="max-w-xl">
                         <span className="text-black dark:text-white font-semibold tracking-wider uppercase text-sm mb-2 block">My Services</span>
-                        <h2 className="text-4xl font-bold text-gray-900 dark:text-white">What I Do</h2>
+                        <h2 className="text-4xl font-bold text-zinc-900 dark:text-white tracking-tight">What I Do</h2>
                     </div>
                     {/* Optional description or link on the right */}
                 </div>

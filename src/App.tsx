@@ -11,11 +11,11 @@ import { ThemeProvider, useTheme } from './contexts/ThemeContext';
 
 function AppContent() {
   const { theme } = useTheme();
-  
+
   return (
     <Router>
       <ScrollToHash />
-      <div className={`flex flex-col min-h-screen font-sans ${theme} text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-900 transition-colors duration-200`}>
+      <div className={`flex flex-col min-h-screen font-sans ${theme} text-zinc-900 dark:text-zinc-100 bg-white dark:bg-black transition-colors duration-200`}>
         <Navbar />
         <main className="flex-grow">
           <Routes>
