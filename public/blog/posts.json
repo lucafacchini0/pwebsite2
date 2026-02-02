@@ -1,0 +1,29 @@
+[
+    {
+        "slug": "tutorial1",
+        "title": "Building a Minimalist Portfolio with React",
+        "description": "In this tutorial, we will explore how to build a clean and modern personal website using React and Tailwind CSS.",
+        "thumbnail": "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?auto=format&fit=crop&q=80&w=1000",
+        "date": "Feb 02, 2026",
+        "tags": [
+            "React",
+            "Tailwind CSS",
+            "Tutorial"
+        ],
+        "author": "Luca Facchini",
+        "authorAvatar": "https://ui-avatars.com/api/?name=Luca+Facchini&background=000&color=fff"
+    },
+    {
+        "slug": "design-trends-2026",
+        "title": "Web Design Trends to Watch in 2026",
+        "description": "A look at the emerging design trends that are shaping the web this year, from glassmorphism to bento girds.",
+        "thumbnail": "https://images.unsplash.com/photo-1545235617-9465d2a55698?auto=format&fit=crop&q=80&w=1000",
+        "date": "Jan 15, 2026",
+        "tags": [
+            "Design",
+            "Trends"
+        ],
+        "author": "Luca Facchini",
+        "authorAvatar": "https://ui-avatars.com/api/?name=Luca+Facchini&background=000&color=fff"
+    }
+]
