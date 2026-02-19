@@ -50,7 +50,8 @@ export const Navbar: React.FC = () => {
                     <div className="hidden lg:flex items-center gap-8">
                         <NavLink to="/">Home</NavLink>
                         <NavLink to="/#about">About</NavLink>
-                        <NavLink to="/#projects">Projects</NavLink>
+                        <NavLink to="/#skills">Skills</NavLink>
+                        <NavLink to="/projects">Projects</NavLink>
                         <NavLink to="/blog">Blog</NavLink>
                         <NavLink to="/contact">Contact</NavLink>
                         <ThemeToggle />
@@ -77,7 +78,8 @@ export const Navbar: React.FC = () => {
                         <div className="flex flex-col py-4 gap-4">
                             <NavLink to="/" onClick={() => setIsOpen(false)}>Home</NavLink>
                             <NavLink to="/#about" onClick={() => setIsOpen(false)}>About</NavLink>
-                            <NavLink to="/#projects" onClick={() => setIsOpen(false)}>Projects</NavLink>
+                            <NavLink to="/#skills" onClick={() => setIsOpen(false)}>Skills</NavLink>
+                            <NavLink to="/projects" onClick={() => setIsOpen(false)}>Projects</NavLink>
                             <NavLink to="/blog" onClick={() => setIsOpen(false)}>Blog</NavLink>
                             <NavLink to="/contact" onClick={() => setIsOpen(false)}>Contact</NavLink>
                         </div>

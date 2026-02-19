@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link, Navigate } from 'react-router-dom';
 import { Layout } from '../components/common/Layout';
-import { MarkdownRenderer } from '../components/blog/MarkdownRenderer';
+import { MarkdownRenderer } from '../components/common/MarkdownRenderer';
 import { ArrowLeft, Calendar } from 'lucide-react';
 import type { BlogPostSummary } from '../components/blog/BlogCard';
 import matter from 'gray-matter';
@@ -9,7 +9,7 @@ import { Buffer } from 'buffer';
 
 // This is needed for gray-matter to work in the browser
 if (typeof window !== 'undefined') {
-    (window as any).Buffer = Buffer;
+    (window as unknown as { Buffer: unknown }).Buffer = Buffer;
 }
 
 const BlogPost: React.FC = () => {

@@ -19,7 +19,7 @@ export const Hero: React.FC = () => {
                     I'm Luca Facchini
                 </h1>
                 <p className="text-xl md:text-2xl text-zinc-600 dark:text-zinc-400 mb-10 max-w-2xl animate-in fade-in slide-in-from-bottom-5 duration-800 delay-100 font-light">
-                    Creative Developer & UI/UX Enthusiast crafting digital experiences.
+                    CyberSecurity & Computer Engineering Student | Hacking, Backend & AI.
                 </p>
 
                 <div className="flex gap-4 animate-in fade-in slide-in-from-bottom-6 duration-900 delay-200">

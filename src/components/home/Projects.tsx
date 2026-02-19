@@ -1,90 +1,94 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Layout } from '../common/Layout';
-import { ArrowUpRight } from 'lucide-react';
+import { ArrowUpRight, Shield, Server, Brain, Lock, Folder } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import matter from 'gray-matter';
+import { Buffer } from 'buffer';
+
+// This is needed for gray-matter to work in the browser
+if (typeof window !== 'undefined') {
+    (window as unknown as { Buffer: unknown }).Buffer = Buffer;
+}
 
 interface ProjectCardProps {
     title: string;
-    subtitle: string;
     description: string;
-    image?: string;
-    link?: string;
+    link: string;
     tags: string[];
+    slug: string;
 }
 
-const ProjectCard: React.FC<ProjectCardProps> = ({ title, subtitle, description, tags, link, image }) => (
-    <a href={link} className="group block h-full bg-white dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 rounded-2xl overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
-        <div className="aspect-video bg-zinc-100 dark:bg-zinc-800 relative overflow-hidden">
-            {image ? (
-                <img src={image} alt={title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-            ) : (
-                <div className="w-full h-full flex items-center justify-center text-zinc-300 dark:text-zinc-600 font-bold text-2xl">
-                    PROJECT PREVIEW
-                </div>
-            )}
-            <div className="absolute top-4 right-4 bg-white dark:bg-zinc-800 p-2 rounded-full shadow-sm opacity-0 group-hover:opacity-100 transition-opacity">
-                <ArrowUpRight size={20} className="text-zinc-900 dark:text-white" />
-            </div>
+const iconMap: Record<string, React.ReactNode> = {
+    'aegis-scanner': <Shield size={18} />,
+    'neuralguard': <Brain size={18} />,
+    'vault-architecture': <Lock size={18} />,
+    'hypernode': <Server size={18} />,
+    'default': <Folder size={18} />
+};
+
+const ProjectCard: React.FC<ProjectCardProps> = ({ title, description, link }) => (
+    <Link to={link} className="group relative block h-full bg-zinc-50 dark:bg-zinc-900 rounded-3xl p-8 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all duration-500 border border-transparent hover:border-zinc-200 dark:hover:border-zinc-700">
+        <div className="absolute top-8 right-8 text-zinc-400 group-hover:text-zinc-900 dark:group-hover:text-white group-hover:translate-x-1 group-hover:-translate-y-1 transition-all duration-300">
+            <ArrowUpRight size={20} />
         </div>
-        <div className="p-6">
-            <span className="text-xs font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-wider mb-2 block">{subtitle}</span>
-            <h3 className="text-xl font-bold text-zinc-900 dark:text-white mb-3 group-hover:text-black dark:group-hover:text-zinc-300 transition-colors uppercase tracking-tight">{title}</h3>
-            <p className="text-zinc-600 dark:text-zinc-300 mb-4 line-clamp-2 font-light">{description}</p>
-            <div className="flex flex-wrap gap-2">
-                {tags.map((tag, idx) => (
-                    <span key={idx} className="px-3 py-1 bg-zinc-50 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300 text-xs font-medium rounded-full border border-zinc-100 dark:border-zinc-700">
-                        {tag}
-                    </span>
-                ))}
-            </div>
-        </div>
-    </a>
+
+        <h3 className="text-xl font-bold text-zinc-900 dark:text-white tracking-tight mb-3 transition-colors duration-300 pr-8">
+            {title}
+        </h3>
+        <p className="text-zinc-500 dark:text-zinc-400 mb-2 line-clamp-3 font-medium leading-relaxed text-sm">
+            {description}
+        </p>
+    </Link>
 );
 
 export const Projects: React.FC = () => {
-    const projects = [
-        {
-            title: "E-Commerce Dashboard",
-            subtitle: "Web Application",
-            description: "A comprehensive dashboard for managing products, orders, and analytics for an online store. Built with React and TypeScript.",
-            tags: ["React", "TypeScript", "Tailwind"],
-            link: "#"
-        },
-        {
-            title: "Travel Companion App",
-            subtitle: "Mobile Design",
-            description: "A mobile app concept designed to help travelers plan their trips, find local gems, and connect with other explorers.",
-            tags: ["Figma", "UI/UX", "Prototyping"],
-            link: "#"
-        },
-        {
-            title: "AI Image Generator",
-            subtitle: "Integration",
-            description: "An interface allowing users to generate images from text prompts using OpenAI's DALL-E API.",
-            tags: ["Next.js", "OpenAI API", "Node.js"],
-            link: "#"
+    const featuredProjects = useMemo(() => {
+        try {
+            const modules = import.meta.glob('../../projects/*.md', { as: 'raw', eager: true });
+
+            return Object.entries(modules).slice(0, 3).map(([path, content]) => {
+                const slug = path.split('/').pop()?.replace('.md', '') || '';
+                const { data } = matter(content as string);
+
+                return {
+                    title: data.title || slug,
+                    description: data.description || '',
+                    tags: data.technologies || [],
+                    link: `/projects/${slug}`,
+                    slug: slug
+                };
+            });
+        } catch (err) {
+            console.error(err);
+            return [];
         }
-    ];
+    }, []);
 
     return (
-        <section id="projects" className="py-24 bg-white dark:bg-black transition-colors duration-200">
+        <section id="projects" className="h-screen flex items-center bg-white dark:bg-zinc-950 transition-colors duration-200">
             <Layout>
-                <div className="text-center max-w-2xl mx-auto mb-16">
-                    <span className="text-black dark:text-white font-semibold tracking-wider uppercase text-sm mb-2 block">Portfolio</span>
-                    <h2 className="text-4xl font-bold text-zinc-900 dark:text-white mb-4 tracking-tight">My Projects</h2>
-                    <p className="text-zinc-600 dark:text-zinc-400 font-light">
-                        Here are some of the projects I've worked on. Each one was a unique challenge that helped me grow as a developer.
-                    </p>
+                {/* Header aligned with MySkills */}
+                <div className="mb-14">
+                    <span className="text-black dark:text-white font-semibold tracking-[0.2em] uppercase text-sm mb-2 block">
+                        Work
+                    </span>
+                    <h2 className="text-4xl md:text-5xl font-bold text-zinc-900 dark:text-white tracking-tight">
+                        Featured Projects
+                    </h2>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    {projects.map((project, index) => (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
+                    {featuredProjects.map((project, index) => (
                         <ProjectCard key={index} {...project} />
                     ))}
                 </div>
 
-                <div className="text-center mt-12">
-                    <a href="https://github.com/lucafacchini" target="_blank" rel="noreferrer" className="inline-flex items-center font-medium text-zinc-900 dark:text-white hover:text-zinc-600 dark:hover:text-zinc-400 transition-colors border-b-2 border-black dark:border-white pb-0.5">
-                        View GitHub Profile <ArrowUpRight size={16} className="ml-1" />
+                <div className="flex justify-between items-center pt-8">
+                    <Link to="/projects" className="px-6 py-3 rounded-full bg-zinc-900 text-white dark:bg-white dark:text-zinc-900 text-xs font-bold uppercase tracking-[0.2em] transition-all hover:scale-105 active:scale-95">
+                        View Full Portfolio
+                    </Link>
+                    <a href="https://github.com/lucafacchini" target="_blank" rel="noreferrer" className="text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white text-xs font-bold uppercase tracking-[0.2em] transition-colors">
+                        Explore GitHub
                     </a>
                 </div>
             </Layout>

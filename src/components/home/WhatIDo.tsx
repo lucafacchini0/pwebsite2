@@ -50,7 +50,7 @@ export const WhatIDo: React.FC = () => {
     ];
 
     return (
-        <section className="py-24 bg-white dark:bg-black relative transition-colors duration-200">
+        <section className="h-screen flex items-center bg-white dark:bg-black relative transition-colors duration-200">
             <DotsGridBackground />
             <Layout className="relative z-10">
                 <div className="mb-16 md:flex md:justify-between md:items-end">

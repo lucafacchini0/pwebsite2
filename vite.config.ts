@@ -1,4 +1,4 @@
-import { defineConfig } from 'vite'
+import { defineConfig, type ViteDevServer } from 'vite'
 import tailwindcss from '@tailwindcss/vite'
 import react from '@vitejs/plugin-react'
 import fs from 'fs'
@@ -31,7 +31,7 @@ function blogIndexPlugin() {
     buildStart() {
       generateIndex()
     },
-    configureServer(server: any) {
+    configureServer(server: ViteDevServer) {
       server.watcher.on('addDir', (dirPath: string) => {
         if (dirPath.includes('public/post')) generateIndex()
       })

@@ -4,6 +4,8 @@ import { Footer } from './components/layout/Footer';
 import Home from './pages/Home';
 import { ScrollToHash } from './components/common/ScrollToHash';
 import Blog from './pages/Blog';
+import Projects from './pages/Projects';
+import ProjectMockup from './pages/ProjectMockup';
 import Contact from './pages/Contact';
 import BlogPost from './pages/BlogPost';
 import NotFound from './pages/NotFound';
@@ -20,6 +22,8 @@ function AppContent() {
         <main className="flex-grow">
           <Routes>
             <Route path="/" element={<Home />} />
+            <Route path="/projects" element={<Projects />} />
+            <Route path="/projects/:slug" element={<ProjectMockup />} />
             <Route path="/blog" element={<Blog />} />
             <Route path="/blog/:slug" element={<BlogPost />} />
             <Route path="/contact" element={<Contact />} />

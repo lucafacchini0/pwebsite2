@@ -9,7 +9,7 @@ import { Buffer } from 'buffer';
 
 // This is needed for gray-matter to work in the browser
 if (typeof window !== 'undefined') {
-    (window as any).Buffer = Buffer;
+    (window as unknown as { Buffer: unknown }).Buffer = Buffer;
 }
 
 const Blog: React.FC = () => {

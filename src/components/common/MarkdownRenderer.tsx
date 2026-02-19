@@ -1,14 +1,22 @@
 import React, { useState } from 'react';
-import ReactMarkdown from 'react-markdown';
+import ReactMarkdown, { type ExtraProps } from 'react-markdown';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { Check, Copy } from 'lucide-react';
+import remarkGfm from 'remark-gfm';
+import remarkMath from 'remark-math';
+import rehypeKatex from 'rehype-katex';
+import 'katex/dist/katex.min.css';
 
 interface MarkdownRendererProps {
     content: string;
+    /** Extra Tailwind/prose classes applied to the wrapping <article> */
+    className?: string;
 }
 
-const CodeBlock = ({ language, children }: { language: string, children: string }) => {
+// ─── Code Block with copy button ─────────────────────────────────────────────
+
+const CodeBlock = ({ language, children }: { language: string; children: string }) => {
     const [copied, setCopied] = useState(false);
 
     const handleCopy = () => {
@@ -66,31 +74,50 @@ const CodeBlock = ({ language, children }: { language: string, children: string 
     );
 };
 
-export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content }) => {
-    return (
-        <article className="prose prose-lg prose-zinc dark:prose-invert max-w-none 
-      prose-headings:font-bold prose-headings:tracking-tight prose-headings:text-zinc-900 dark:prose-headings:text-white
-      prose-a:text-black dark:prose-a:text-white prose-a:font-bold prose-a:underline-offset-4 prose-a:decoration-1 hover:prose-a:decoration-2
-      prose-img:rounded-3xl prose-img:shadow-xl
-      prose-pre:bg-transparent prose-pre:p-0
-      prose-code:text-zinc-900 dark:prose-code:text-zinc-100 prose-code:bg-zinc-100 dark:prose-code:bg-zinc-800 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded-md prose-code:before:content-none prose-code:after:content-none
-    ">
-            <ReactMarkdown
-                components={{
-                    code({ node, inline, className, children, ...props }: any) {
-                        const match = /language-(\w+)/.exec(className || '');
-                        const language = match ? match[1] : '';
+// ─── Shared Markdown Renderer ─────────────────────────────────────────────────
 
-                        return !inline ? (
-                            <CodeBlock language={language}>
-                                {String(children).replace(/\n$/, '')}
-                            </CodeBlock>
-                        ) : (
-                            <code className={className} {...props}>
+export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content, className = '' }) => {
+    return (
+        <article
+            className={`
+                prose prose-lg prose-zinc dark:prose-invert max-w-none
+                prose-headings:font-bold prose-headings:tracking-tight
+                prose-headings:text-zinc-900 dark:prose-headings:text-white
+                prose-a:text-black dark:prose-a:text-white prose-a:font-bold
+                prose-a:underline-offset-4 prose-a:decoration-1 hover:prose-a:decoration-2
+                prose-img:rounded-3xl prose-img:shadow-xl
+                prose-pre:bg-transparent prose-pre:p-0
+                prose-code:text-zinc-900 dark:prose-code:text-zinc-100
+                prose-code:bg-zinc-100 dark:prose-code:bg-zinc-800
+                prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded-md
+                prose-code:before:content-none prose-code:after:content-none
+                ${className}
+            `}
+        >
+            <ReactMarkdown
+                remarkPlugins={[remarkGfm, remarkMath]}
+                rehypePlugins={[rehypeKatex]}
+                components={{
+                    code(props: React.HTMLAttributes<HTMLElement> & ExtraProps) {
+                        const { className: codeClassName, children, ...rest } = props;
+                        const match = /language-(\w+)/.exec(codeClassName || '');
+                        const language = match ? match[1] : '';
+                        const content = String(children).replace(/\n$/, '');
+
+                        // react-markdown v7+ no longer passes an `inline` prop.
+                        // Detect inline code: no language class AND no newlines in content.
+                        const isInline = !match && !content.includes('\n');
+
+                        return isInline ? (
+                            <code className={codeClassName} {...rest}>
                                 {children}
                             </code>
+                        ) : (
+                            <CodeBlock language={language}>
+                                {content}
+                            </CodeBlock>
                         );
-                    }
+                    },
                 }}
             >
                 {content}

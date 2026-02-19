@@ -3,6 +3,7 @@ import { Hero } from '../components/home/Hero';
 import { AboutMe } from '../components/home/AboutMe';
 import { WhatIDo } from '../components/home/WhatIDo';
 import { Education } from '../components/home/Education';
+import { MySkills } from '../components/home/MySkills';
 import { Projects } from '../components/home/Projects';
 import { ContactPreview } from '../components/home/ContactPreview';
 
@@ -18,6 +19,7 @@ const Home: React.FC = () => {
             <AboutMe />
             <WhatIDo />
             <Education />
+            <MySkills />
             <Projects />
             <ContactPreview />
         </div>
