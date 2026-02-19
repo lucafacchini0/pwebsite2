@@ -10,9 +10,9 @@ const InfoItem = ({ label, value }: { label: string; value: string }) => (
 
 export const AboutMe: React.FC = () => {
     return (
-        <section id="about" className="py-32 bg-zinc-50 dark:bg-black transition-colors duration-200">
+        <section id="about" className="min-h-screen flex items-center bg-zinc-50 dark:bg-black transition-colors duration-200 py-24">
             <Layout>
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-start">
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-24 items-center">
 
                     {/* Left: Stats/Info */}
                     <div className="lg:col-span-5 xl:col-span-4">

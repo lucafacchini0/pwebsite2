@@ -1,6 +1,5 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, Calendar } from 'lucide-react';
 
 export interface BlogPostSummary {
     slug: string;
@@ -19,53 +18,28 @@ interface BlogCardProps {
 
 export const BlogCard: React.FC<BlogCardProps> = ({ post }) => {
     return (
-        <Link to={`/blog/${post.slug}`} className="group flex flex-col bg-white dark:bg-black rounded-2xl overflow-hidden hover:shadow-xl transition-all duration-300 border border-zinc-100 dark:border-zinc-900">
-            <div className="relative h-64 overflow-hidden bg-zinc-100 dark:bg-zinc-800">
-                <img
-                    src={post.thumbnail}
-                    alt={post.title}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                    onError={(e) => {
-                        (e.target as HTMLImageElement).style.display = 'none';
-                        const parent = (e.target as HTMLImageElement).parentElement;
-                        if (parent) {
-                            const fallback = document.createElement('div');
-                            fallback.className = "w-full h-full flex items-center justify-center text-zinc-300 dark:text-zinc-600 font-bold text-2xl uppercase tracking-widest";
-                            fallback.innerText = "Blog Post";
-                            parent.appendChild(fallback);
-                        }
-                    }}
-                />
-                <div className="absolute top-4 left-4 flex gap-2">
+        <Link
+            to={`/blog/${post.slug}`}
+            className="group block py-6 border-b border-zinc-200 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-900/30 transition-colors duration-200"
+        >
+            <h3 className="text-xl font-semibold text-zinc-900 dark:text-white mb-2 group-hover:text-black dark:group-hover:text-white transition-colors">
+                {post.title}
+            </h3>
+            <p className="text-zinc-600 dark:text-zinc-400 font-light leading-relaxed mb-3">
+                {post.description}
+            </p>
+            {post.tags.length > 0 && (
+                <div className="flex gap-2 flex-wrap">
                     {post.tags.map(tag => (
-                        <span key={tag} className="px-3 py-1 bg-white/90 dark:bg-zinc-900/90 backdrop-blur-sm text-xs font-bold text-zinc-900 dark:text-white rounded-full shadow-sm">
+                        <span
+                            key={tag}
+                            className="text-xs px-2 py-1 bg-zinc-100 dark:bg-zinc-900 text-zinc-600 dark:text-zinc-400 rounded"
+                        >
                             {tag}
                         </span>
                     ))}
                 </div>
-            </div>
-            <div className="p-8 flex flex-col flex-grow">
-                <div className="flex items-center gap-2 text-sm text-zinc-400 dark:text-zinc-500 mb-3">
-                    <Calendar size={14} />
-                    <span>{post.date}</span>
-                </div>
-                <h3 className="text-2xl font-bold text-zinc-900 dark:text-white mb-3 transition-colors line-clamp-2 uppercase tracking-tight">
-                    {post.title}
-                </h3>
-                <p className="text-zinc-600 dark:text-zinc-300 mb-6 line-clamp-3 flex-grow font-light leading-relaxed">
-                    {post.description}
-                </p>
-
-                <div className="flex items-center justify-between pt-6 border-t border-zinc-100 dark:border-zinc-900 mt-auto">
-                    <div className="flex items-center gap-3">
-                        <img src={post.authorAvatar} alt={post.author} className="w-8 h-8 rounded-full border border-zinc-200 dark:border-zinc-800" />
-                        <span className="text-sm font-medium text-zinc-900 dark:text-white">{post.author}</span>
-                    </div>
-                    <div className="flex items-center text-sm font-bold text-black dark:text-white opacity-0 group-hover:opacity-100 transition-all transform translate-x-[-10px] group-hover:translate-x-0">
-                        Read Post <ArrowRight size={16} className="ml-1" />
-                    </div>
-                </div>
-            </div>
+            )}
         </Link>
     );
 };

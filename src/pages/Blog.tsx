@@ -144,7 +144,7 @@ const Blog: React.FC = () => {
                 ) : (
                     <>
                         {filteredPosts.length > 0 ? (
-                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 animate-in fade-in slide-in-from-bottom-8 duration-700">
+                            <div className="max-w-4xl mx-auto animate-in fade-in slide-in-from-bottom-8 duration-700">
                                 {filteredPosts.map((post) => (
                                     <BlogCard key={post.slug} post={post} />
                                 ))}

@@ -93,54 +93,44 @@ const BlogPost: React.FC = () => {
                 </Link>
 
                 {/* Header */}
-                <header className="mb-12">
-                    <div className="flex gap-2 mb-4">
-                        {metadata?.tags.map(tag => (
-                            <span key={tag} className="px-3 py-1 bg-zinc-100 dark:bg-zinc-800 text-xs font-bold text-zinc-700 dark:text-zinc-300 rounded-full">
-                                {tag}
-                            </span>
-                        ))}
-                    </div>
-                    <h1 className="text-4xl md:text-5xl font-bold text-zinc-900 dark:text-white mb-6 leading-tight tracking-tight">
+                <header className="mb-12 pb-8 border-b border-zinc-200 dark:border-zinc-800">
+                    <h1 className="text-4xl md:text-5xl font-bold text-zinc-900 dark:text-white mb-4 leading-tight">
                         {metadata?.title}
                     </h1>
 
-                    <div className="flex items-center justify-between border-b border-zinc-100 dark:border-zinc-900 pb-8">
-                        <div className="flex items-center gap-4">
+                    <p className="text-lg text-zinc-600 dark:text-zinc-400 font-light leading-relaxed mb-4">
+                        {metadata?.description}
+                    </p>
+
+                    <div className="flex items-center gap-4 mb-4">
+                        <div className="flex items-center text-zinc-500 dark:text-zinc-400 text-sm">
+                            <Calendar size={14} className="mr-1" />
+                            {metadata?.date}
+                        </div>
+                        <span className="text-zinc-300 dark:text-zinc-700">•</span>
+                        <div className="flex items-center gap-2 text-zinc-600 dark:text-zinc-400 text-sm">
                             <img
                                 src={metadata?.authorAvatar}
                                 alt={metadata?.author}
-                                className="w-12 h-12 rounded-full border border-zinc-100 dark:border-zinc-800"
+                                className="w-6 h-6 rounded-full"
                             />
-                            <div>
-                                <div className="font-bold text-zinc-900 dark:text-white">{metadata?.author}</div>
-                                <div className="flex items-center text-zinc-500 dark:text-zinc-400 text-sm">
-                                    <Calendar size={14} className="mr-1" />
-                                    {metadata?.date}
-                                </div>
-                            </div>
+                            {metadata?.author}
                         </div>
                     </div>
-                </header>
 
-                {/* Featured Image */}
-                <div className="mb-12 rounded-3xl overflow-hidden shadow-sm h-[400px] bg-zinc-50 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-900 relative">
-                    <img
-                        src={metadata?.thumbnail}
-                        alt={metadata?.title}
-                        className="w-full h-full object-cover"
-                        onError={(e) => {
-                            (e.target as HTMLImageElement).style.display = 'none';
-                            const parent = (e.target as HTMLImageElement).parentElement;
-                            if (parent) {
-                                const fallback = document.createElement('div');
-                                fallback.className = "w-full h-full flex items-center justify-center text-zinc-200 dark:text-zinc-800 font-bold text-4xl tracking-widest";
-                                fallback.innerText = "BLOG POST";
-                                parent.appendChild(fallback);
-                            }
-                        }}
-                    />
-                </div>
+                    {metadata?.tags && metadata.tags.length > 0 && (
+                        <div className="flex gap-2 flex-wrap">
+                            {metadata.tags.map(tag => (
+                                <span
+                                    key={tag}
+                                    className="text-xs px-2 py-1 bg-zinc-100 dark:bg-zinc-900 text-zinc-600 dark:text-zinc-400 rounded"
+                                >
+                                    {tag}
+                                </span>
+                            ))}
+                        </div>
+                    )}
+                </header>
 
                 {/* Content */}
                 <MarkdownRenderer content={content} />
